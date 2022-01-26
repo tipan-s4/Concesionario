@@ -1,0 +1,45 @@
+//Entidades
+entity Cliente{
+dni String,
+nombre String,
+numeroCompras Integer,
+tier Integer
+}
+
+entity Venta{
+fecha LocalDate,
+tipoPago String,
+total Double
+}
+
+entity Empleado{
+dni String,
+nombre String,
+activo Boolean,
+numeroVentas Integer
+}
+
+entity Coche{
+marca String,
+modelo String,
+color String,
+numeroSerie String,
+precio Double,
+exposicion Boolean
+}
+
+
+//Relaciones
+relationship OneToOne{
+	Venta {coches} to Coche
+}
+
+relationship ManyToOne{
+  Venta {empleado} to Empleado,
+  Venta {cliente} to Cliente
+} 
+
+//Ajustes
+paginate all with pagination
+service all with serviceImpl
+dto * with mapstruct
