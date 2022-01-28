@@ -50,8 +50,8 @@
           <th scope="col"></th>
         </tr>
       </thead>
-      <tbody>
-        <tr *ngFor="let venta of ventas; trackBy: trackId" data-cy="entityTable">
+      <tbody *ngFor="let venta of ventas; trackBy: trackId">
+        <tr *ngIf="venta.empleado != null && venta.coches != null && venta.cliente != null">
           <td>
             <a [routerLink]="['/venta', venta.id, 'view']">{{ venta.id }}</a>
           </td>

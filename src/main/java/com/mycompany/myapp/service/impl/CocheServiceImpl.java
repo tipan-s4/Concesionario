@@ -2,6 +2,7 @@ package com.mycompany.myapp.service.impl;
 
 import com.mycompany.myapp.domain.Coche;
 import com.mycompany.myapp.repository.CocheRepository;
+import com.mycompany.myapp.repository.specification.CocheSpecification;
 import com.mycompany.myapp.service.CocheService;
 import com.mycompany.myapp.service.dto.CocheDTO;
 import com.mycompany.myapp.service.mapper.CocheMapper;
@@ -59,6 +60,20 @@ public class CocheServiceImpl implements CocheService {
     public Page<CocheDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Coches");
         return cocheRepository.findAll(pageable).map(cocheMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CocheDTO> findByExposicion(Pageable pageable) {
+        log.debug("Request to get all Coches");
+        return cocheRepository.findByExposicionTrue(pageable).map(cocheMapper::toDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CocheDTO> findBySearchingParam(String filtro, Pageable pageable) {
+        log.debug("Request to get all Coches");
+        return cocheRepository.findAll(CocheSpecification.searchingParam(filtro), pageable).map(cocheMapper::toDto);
     }
 
     @Override

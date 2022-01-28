@@ -151,6 +151,39 @@ public class CocheResource {
     }
 
     /**
+     * {@code GET  /coches} : get all the coches.
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of coches in body.
+     */
+    @GetMapping("/coches/searchingParam")
+    public ResponseEntity<List<CocheDTO>> getAllCochesByFilter(
+        Pageable pageable,
+        @RequestParam(required = false, defaultValue = "") String filtro
+    ) throws InterruptedException, URISyntaxException {
+        log.debug("REST request to get a page of Coches");
+        filtro = !filtro.equals("undefined") ? filtro : "%";
+        // Page<CocheDTO> page = cocheService.findByExposicion(pageable);
+        Page<CocheDTO> page = cocheService.findBySearchingParam(filtro, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /coches} : get all the coches.
+     *
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of coches in body.
+     */
+    @GetMapping("/coches/estado/activos")
+    public ResponseEntity<List<CocheDTO>> getAllCochesActivos(@org.springdoc.api.annotations.ParameterObject Pageable pageable) {
+        log.debug("REST request to get a page of Coches");
+        Page<CocheDTO> page = cocheService.findByExposicion(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * {@code GET  /coches/:id} : get the "id" coche.
      *
      * @param id the id of the cocheDTO to retrieve.

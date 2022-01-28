@@ -1,6 +1,9 @@
 package com.mycompany.myapp.service.impl;
 
+import com.mycompany.myapp.domain.Empleado;
 import com.mycompany.myapp.domain.Venta;
+import com.mycompany.myapp.repository.CocheRepository;
+import com.mycompany.myapp.repository.EmpleadoRepository;
 import com.mycompany.myapp.repository.VentaRepository;
 import com.mycompany.myapp.service.VentaService;
 import com.mycompany.myapp.service.dto.VentaDTO;
@@ -23,18 +26,61 @@ public class VentaServiceImpl implements VentaService {
     private final Logger log = LoggerFactory.getLogger(VentaServiceImpl.class);
 
     private final VentaRepository ventaRepository;
+    private final EmpleadoRepository empleadoRepository;
+    private final CocheRepository cocheRepository;
 
     private final VentaMapper ventaMapper;
 
-    public VentaServiceImpl(VentaRepository ventaRepository, VentaMapper ventaMapper) {
+    public VentaServiceImpl(
+        VentaRepository ventaRepository,
+        VentaMapper ventaMapper,
+        EmpleadoRepository empleadoRepository,
+        CocheRepository cocheRepository
+    ) {
         this.ventaRepository = ventaRepository;
         this.ventaMapper = ventaMapper;
+        this.empleadoRepository = empleadoRepository;
+        this.cocheRepository = cocheRepository;
     }
 
+    // Esto nos devuelve un dto que como la base de datos necesita un entity
+    // lo casteamos a entity y como tiene que devolver un dto lo volvemos
+    // a castear a dto
     @Override
     public VentaDTO save(VentaDTO ventaDTO) {
         log.debug("Request to save Venta : {}", ventaDTO);
         Venta venta = ventaMapper.toEntity(ventaDTO);
+        venta = ventaRepository.save(venta);
+        if (null != venta.getEmpleado()) {
+            // sumar uno al numero de ventas de un empleado
+            Empleado empleado = venta.getEmpleado();
+            if (null == empleado.getNumeroVentas()) {
+                empleado.setNumeroVentas(0);
+            }
+            empleado.setNumeroVentas(empleado.getNumeroVentas() + 1);
+            // se guarda en la base de datos la venta
+            empleadoRepository.save(empleado);
+        }
+        return ventaMapper.toDto(venta);
+    }
+
+    public VentaDTO update(VentaDTO ventaDTO) {
+        log.debug("Request to save Venta : {}", ventaDTO);
+        Venta venta = ventaMapper.toEntity(ventaDTO);
+        // Añadir y restar ventas
+        Optional<Venta> va = ventaRepository.findById(venta.getId());
+        if (va.isPresent()) {
+            Venta ventaAnterior = va.get();
+            Empleado empleadoVentaNueva = venta.getEmpleado();
+            Empleado empleadoVentaAntigua = ventaAnterior.getEmpleado();
+
+            if (empleadoVentaNueva.getId() != empleadoVentaAntigua.getId()) {
+                empleadoVentaAntigua.setNumeroVentas(empleadoVentaAntigua.getNumeroVentas() - 1);
+                empleadoVentaNueva.setNumeroVentas(empleadoVentaNueva.getNumeroVentas() + 1);
+                empleadoRepository.save(empleadoVentaAntigua);
+                empleadoRepository.save(empleadoVentaNueva);
+            }
+        }
         venta = ventaRepository.save(venta);
         return ventaMapper.toDto(venta);
     }

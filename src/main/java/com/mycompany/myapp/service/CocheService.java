@@ -34,6 +34,22 @@ public interface CocheService {
     Page<CocheDTO> findAll(Pageable pageable);
 
     /**
+     * Get all the coches.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<CocheDTO> findByExposicion(Pageable pageable);
+
+    /**
+     * Get all the coches.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<CocheDTO> findBySearchingParam(String filter, Pageable pageable);
+
+    /**
      * Get the "id" coche.
      *
      * @param id the id of the entity.

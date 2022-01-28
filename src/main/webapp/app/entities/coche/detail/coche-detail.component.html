@@ -36,7 +36,8 @@
         </dd>
         <dt><span jhiTranslate="testDtoApp.coche.exposicion">Exposicion</span></dt>
         <dd>
-          <span>{{ coche.exposicion }}</span>
+          <span *ngIf="coche.exposicion">Si</span>
+          <span *ngIf="!coche.exposicion">No</span>
         </dd>
       </dl>
 

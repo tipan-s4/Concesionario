@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IVenta } from '../venta.model';
+import { IVenta, Venta } from '../venta.model';
 
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { VentaService } from '../service/venta.service';
@@ -71,6 +71,16 @@ export class VentaComponent implements OnInit {
       }
     });
   }
+
+  // propertyEmpty(venta: Venta): Venta{
+  //   const result = !Object.values(venta).every(o => o === null);
+
+  //   if(result){
+  //     return venta;
+  //   }else{
+  //     return ;
+  //   }
+  // }
 
   protected sort(): string[] {
     const result = [this.predicate + ',' + (this.ascending ? ASC : DESC)];

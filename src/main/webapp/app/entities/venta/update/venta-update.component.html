@@ -50,7 +50,7 @@
               [ngValue]="cocheOption.id === editForm.get('coches')!.value?.id ? editForm.get('coches')!.value : cocheOption"
               *ngFor="let cocheOption of cochesCollection; trackBy: trackCocheById"
             >
-              {{ cocheOption.id }}
+              {{ cocheOption.marca }} - {{ cocheOption.modelo }} - {{ cocheOption.color }} - {{ cocheOption.precio }}€
             </option>
           </select>
         </div>
@@ -63,7 +63,7 @@
               [ngValue]="empleadoOption.id === editForm.get('empleado')!.value?.id ? editForm.get('empleado')!.value : empleadoOption"
               *ngFor="let empleadoOption of empleadosSharedCollection; trackBy: trackEmpleadoById"
             >
-              {{ empleadoOption.id }}
+              {{ empleadoOption.nombre }}
             </option>
           </select>
         </div>
@@ -76,7 +76,7 @@
               [ngValue]="clienteOption.id === editForm.get('cliente')!.value?.id ? editForm.get('cliente')!.value : clienteOption"
               *ngFor="let clienteOption of clientesSharedCollection; trackBy: trackClienteById"
             >
-              {{ clienteOption.id }}
+              {{ clienteOption.nombre }}
             </option>
           </select>
         </div>

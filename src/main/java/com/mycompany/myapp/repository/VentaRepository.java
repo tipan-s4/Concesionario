@@ -1,6 +1,8 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Venta;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +11,7 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface VentaRepository extends JpaRepository<Venta, Long> {}
+public interface VentaRepository extends JpaRepository<Venta, Long> {
+    // @Query ("SELECT v FROM Venta v where v.coches.exposicion = true")
+    // Page<Venta> allCochesByExposicion(Pageable pageable);
+}

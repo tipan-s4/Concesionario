@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 
 import { IVenta, Venta } from '../venta.model';
 import { VentaService } from '../service/venta.service';
@@ -14,12 +14,16 @@ import { EmpleadoService } from 'app/entities/empleado/service/empleado.service'
 import { ICliente } from 'app/entities/cliente/cliente.model';
 import { ClienteService } from 'app/entities/cliente/service/cliente.service';
 
+import { AccountService } from 'app/core/auth/account.service';
+import { Account } from 'app/core/auth/account.model';
+
 @Component({
   selector: 'jhi-venta-update',
   templateUrl: './venta-update.component.html',
 })
 export class VentaUpdateComponent implements OnInit {
   isSaving = false;
+  account: Account | null = null;
 
   cochesCollection: ICoche[] = [];
   empleadosSharedCollection: IEmpleado[] = [];
@@ -35,16 +39,24 @@ export class VentaUpdateComponent implements OnInit {
     cliente: [],
   });
 
+  private readonly destroy$ = new Subject<void>();
+
   constructor(
     protected ventaService: VentaService,
     protected cocheService: CocheService,
     protected empleadoService: EmpleadoService,
     protected clienteService: ClienteService,
     protected activatedRoute: ActivatedRoute,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private accountService: AccountService
   ) {}
 
   ngOnInit(): void {
+    this.accountService
+      .getAuthenticationState()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(account => (this.account = account));
+
     this.activatedRoute.data.subscribe(({ venta }) => {
       this.updateForm(venta);
 
@@ -115,7 +127,7 @@ export class VentaUpdateComponent implements OnInit {
 
   protected loadRelationshipsOptions(): void {
     this.cocheService
-      .query({ filter: 'venta-is-null' })
+      .findCochesActivos()
       .pipe(map((res: HttpResponse<ICoche[]>) => res.body ?? []))
       .pipe(map((coches: ICoche[]) => this.cocheService.addCocheToCollectionIfMissing(coches, this.editForm.get('coches')!.value)))
       .subscribe((coches: ICoche[]) => (this.cochesCollection = coches));

@@ -77,6 +77,9 @@ public class AccountResource {
         if (!user.isPresent()) {
             throw new AccountResourceException("No user was found for this activation key");
         }
+        if (user.isPresent()) {
+            User userEntity = user.get();
+        }
     }
 
     /**
